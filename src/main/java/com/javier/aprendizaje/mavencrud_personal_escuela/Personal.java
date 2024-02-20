@@ -1,22 +1,26 @@
 package com.javier.aprendizaje.mavencrud_personal_escuela;
 
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 public class Personal extends javax.swing.JFrame {
-    
-     // variables para conexion a la db
-    public String driver = ""; 
-    public String username = ""; 
-    public String password = ""; 
-    public String hostname = ""; 
-    public String port = ""; 
-    public String database = ""; 
-    public String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database;
+
+    // variables para conexion a la db
+    public String driver;
+    public String username;
+    public String password;
+    public String hostname;
+    public String port;
+    public String database;
+    public String url;
 
     Connection conn;
     PreparedStatement preparedStatement;
@@ -346,28 +350,28 @@ public class Personal extends javax.swing.JFrame {
                     cajaCelular.setText(celular);
                     cajaIngreso.setText(fecha_ingreso);
                     comboGenero.setSelectedItem(genero); // el valor en la db debe ser igual que en el comboGenero (tener en cuenta las mayusculas y minusculas
-                        JOptionPane.showMessageDialog(null, "Consulta exitosa");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "N° Identificación no registrado");
-                        // si no está registrado el valor ingresado pasa a la cajaIdentificacion para que pueda realizar el registro
-                        limpiar();
-                        cajaIdentificacion.setText(buscar_identificacion);
-                    }
-                    conn.close();
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, "Error al realizar la consulta");
-                    System.err.println("Error al realizar consulta, " + ex);
+                    JOptionPane.showMessageDialog(null, "Consulta exitosa");
+                } else {
+                    JOptionPane.showMessageDialog(null, "N° Identificación no registrado");
+                    // si no está registrado el valor ingresado pasa a la cajaIdentificacion para que pueda realizar el registro
+                    limpiar();
+                    cajaIdentificacion.setText(buscar_identificacion);
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Ingresar N° Identificación para realizar consulta");
-                limpiar();
+                conn.close();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Error al realizar la consulta");
+                System.err.println("Error al realizar consulta, " + ex);
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Ingresar N° Identificación para realizar consulta");
+            limpiar();
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         conn = getConnection();
         String query = "INSERT INTO personal (numero_identificacion,nombre,email,direccion,celular,fecha_ingreso,genero)"
-        + " value (?,?,?,?,?,?,?)";
+                + " value (?,?,?,?,?,?,?)";
         try {
             preparedStatement = conn.prepareStatement(query);
             // obtener los valores ingresados por el usuario en cada caja de texto
@@ -380,7 +384,7 @@ public class Personal extends javax.swing.JFrame {
             genero = String.valueOf(comboGenero.getSelectedItem());
             // identificar si las variables están vacias para no enviar datos vacios a ls db
             if (!identificacion.isEmpty() && !nombre.isEmpty() && !email.isEmpty()
-                && !direccion.isEmpty() && !celular.isEmpty() && !genero.isEmpty()) {
+                    && !direccion.isEmpty() && !celular.isEmpty() && !genero.isEmpty()) {
                 // mandar los valores a la db
                 preparedStatement.setString(1, identificacion);
                 preparedStatement.setString(2, nombre);
@@ -409,7 +413,7 @@ public class Personal extends javax.swing.JFrame {
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         conn = getConnection();
         String query = "UPDATE personal SET numero_identificacion = ?,nombre = ?,email = ?,direccion = ?,"
-        + "celular = ?,fecha_ingreso = ?,genero = ? WHERE idPersonal = ?";
+                + "celular = ?,fecha_ingreso = ?,genero = ? WHERE idPersonal = ?";
         try {
             preparedStatement = conn.prepareStatement(query);
             // obtener los valores de las cajas
@@ -423,7 +427,7 @@ public class Personal extends javax.swing.JFrame {
             genero = String.valueOf(comboGenero.getSelectedItem());
             // identificar si las variables están vacias para no enviar datos vacios a la db
             if (!identificacion.isEmpty() && !nombre.isEmpty() && !email.isEmpty()
-                && !direccion.isEmpty() && !celular.isEmpty() && !genero.isEmpty()) {
+                    && !direccion.isEmpty() && !celular.isEmpty() && !genero.isEmpty()) {
                 // pasar los valores al query correspondiente
                 preparedStatement.setString(1, identificacion);
                 preparedStatement.setString(2, nombre);
@@ -479,10 +483,39 @@ public class Personal extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_menuSalirActionPerformed
 
+    // metodo para leer los valores que se encuentran en la propertie
+    private void loadPropertiesDB() {
+        // crear instancia de la propiedad para porder instanciar la configuracionDB 
+        Properties properties = new Properties();
+        InputStream inputStream;
+        try {
+            // forma de llamar la propertie (de esta manera esta bien para el momento de crear el .exe)
+            inputStream = getClass().getClassLoader().getResourceAsStream("configuracionDB.properties");
+            // leer la informacion de la propertie
+            properties.load(inputStream);
+            // por medio de la clave acceder a los valores
+            driver = properties.getProperty("driver");
+            username = properties.getProperty("username");
+            password = properties.getProperty("password");
+            hostname = properties.getProperty("hostname");
+            port = properties.getProperty("port");
+            database = properties.getProperty("database");
+            url = "jdbc:mysql://" + hostname + ":" + port + "/" + database;
+        } catch (NullPointerException ex) {
+            System.err.println("Error, " + ex);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Error, loading properties: " + ex);
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
+    }
+
     // metodo para la conexion a la db
     public Connection getConnection() {
         Connection conexion = null;
         try {
+            // llamar el metodo que traera los valores de la DB
+            loadPropertiesDB();
             Class.forName(driver);
             conexion = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException ex) {
@@ -518,7 +551,7 @@ public class Personal extends javax.swing.JFrame {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return fechaActual.format(formatter);
     }
-    
+
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
