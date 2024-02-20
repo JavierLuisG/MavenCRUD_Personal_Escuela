@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.javier.aprendizaje.mavencrud_personal_escuela</mainClass>
+                            <mainClass>com.javier.aprendizaje.mavencrud_personal_escuela.Personal</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
