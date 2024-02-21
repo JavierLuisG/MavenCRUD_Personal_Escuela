@@ -30,7 +30,7 @@ Para ejecutar este proyecto, sigue estos pasos:
 
 ### Uso
 1. Ejecuta la aplicación desde tu IDE, preferiblemente NetBeans.
-2. Ejecuta MySQL Workbench para gestionar los datos y crear la base de datos crud_escuela utilizando el script crud_escuela.sql.
+2. Ejecuta MySQL Workbench para gestionar los datos y crear la base de datos crud_escuela utilizando el script crud_escuela.sql que se encuenta en 'src/main/resources/database.
 3. En el proyecto, dentro de la carpeta src/main, crear una carpeta llamada 'resources' para que se genere un paquete llamado 'Other Sources'.
 4. Dentro del paquete Other Sources, en 'src/main/resources' crear un archivo de tipo 'Properties File' llamado 'configuracionDB' donde se ingresan los datos de la base de datos. Por ejemplo:
 - driver=com.mysql.cj.jdbc.Driver
