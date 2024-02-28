@@ -177,6 +177,7 @@ public class Personal extends javax.swing.JFrame {
         jMenu1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         menuRegistrados.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        menuRegistrados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/registros.png"))); // NOI18N
         menuRegistrados.setText("Personal registrado");
         menuRegistrados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,6 +188,7 @@ public class Personal extends javax.swing.JFrame {
         jMenu1.add(jSeparator1);
 
         menuSalir.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        menuSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/salir.png"))); // NOI18N
         menuSalir.setText("Salir");
         menuSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
