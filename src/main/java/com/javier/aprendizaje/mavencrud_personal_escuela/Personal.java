@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 public class Personal extends javax.swing.JFrame {
 
     // variables para conexion a la db
-    public String driver;
     public String username;
     public String password;
     public String hostname;
@@ -496,7 +495,6 @@ public class Personal extends javax.swing.JFrame {
             // leer la informacion de la propertie
             properties.load(inputStream);
             // por medio de la clave acceder a los valores
-            driver = properties.getProperty("driver");
             username = properties.getProperty("username");
             password = properties.getProperty("password");
             hostname = properties.getProperty("hostname");
@@ -518,9 +516,8 @@ public class Personal extends javax.swing.JFrame {
         try {
             // llamar el metodo que traera los valores de la DB
             loadPropertiesDB();
-            Class.forName(driver);
             conexion = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             System.err.println("Error en la conexión, " + ex);
         }
         return conexion;
