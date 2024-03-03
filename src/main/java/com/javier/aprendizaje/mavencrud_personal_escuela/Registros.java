@@ -19,7 +19,7 @@ public class Registros extends javax.swing.JDialog {
     String celular;
 
     DefaultTableModel model = new DefaultTableModel();
-    
+
     public Registros(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -28,7 +28,7 @@ public class Registros extends javax.swing.JDialog {
         setResizable(false);
         cargarModel();
     }
-    
+
     private void asignarFilaDatos() {
         Personal personal = new Personal();
         conn = personal.getConnection();
@@ -49,9 +49,32 @@ public class Registros extends javax.swing.JDialog {
                     model.addRow(objects);
                 }
             }
-            conn.close();
         } catch (SQLException ex) {
             System.err.println("Error, " + ex);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                    rs = null;
+                } catch (SQLException ex) {
+                    System.err.println("No se cerró el ResultSet");
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                    rs = null;
+                } catch (SQLException ex) {
+                    System.err.println("No se cerró el ResultSet");
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    System.err.println("No se pudo cerrar la conexión, " + ex);
+                }
+            }
         }
     }
 

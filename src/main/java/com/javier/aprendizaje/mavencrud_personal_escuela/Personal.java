@@ -358,10 +358,11 @@ public class Personal extends javax.swing.JFrame {
                     limpiar();
                     cajaIdentificacion.setText(buscar_identificacion);
                 }
-                conn.close();
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Error al realizar la consulta");
                 System.err.println("Error al realizar consulta, " + ex);
+            } finally {
+                closeConnection();
             }
         } else {
             JOptionPane.showMessageDialog(null, "Ingresar N° Identificación para realizar consulta");
@@ -408,6 +409,8 @@ public class Personal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
         } catch (SQLException ex) {
             System.err.println("Error en registrar, " + ex);
+        } finally {
+            closeConnection();
         }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
@@ -444,13 +447,14 @@ public class Personal extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "No pueden haber campos vacíos");
             }
-            conn.close();
         } catch (MysqlDataTruncation ex) { // si excede o hay errores en los campos solicitados
             JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
         } catch (SQLIntegrityConstraintViolationException ex) {
             JOptionPane.showMessageDialog(null, "Realice consulta del registro para poder actualizar los datos");
         } catch (SQLException ex) {
             System.err.println("Error en actualización, " + ex);
+        } finally {
+            closeConnection();
         }
     }//GEN-LAST:event_btnActualizarActionPerformed
 
@@ -464,9 +468,10 @@ public class Personal extends javax.swing.JFrame {
             preparedStatement.executeUpdate();
             JOptionPane.showMessageDialog(null, "Registro eliminado");
             limpiar();
-            conn.close();
         } catch (SQLException ex) {
             System.err.println("Error al eliminar, " + ex);
+        } finally {
+            closeConnection();
         }
     }//GEN-LAST:event_btnBorrarActionPerformed
 
@@ -507,7 +512,7 @@ public class Personal extends javax.swing.JFrame {
             System.err.println("Error, loading properties: " + ex);
         } catch (IOException ex) {
             System.err.println(ex);
-        }
+        } 
     }
 
     // metodo para la conexion a la db
@@ -521,6 +526,32 @@ public class Personal extends javax.swing.JFrame {
             System.err.println("Error en la conexión, " + ex);
         }
         return conexion;
+    }
+    
+    public void closeConnection() {
+        if (rs != null) {
+            try {
+                rs.close();
+                rs = null;
+            } catch (SQLException ex) {
+                System.err.println("No se cerró el ResultSet");
+            }
+        }
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
+                rs = null;
+            } catch (SQLException ex) {
+                System.err.println("No se cerró el ResultSet");
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                System.err.println("No se pudo cerrar la conexión, " + ex);
+            }
+        }
     }
 
     public void limpiar() {
