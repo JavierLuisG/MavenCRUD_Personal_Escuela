@@ -407,43 +407,43 @@ public class Personal extends javax.swing.JFrame {
         conn = getConnection();
         String query = "UPDATE personal SET numero_identificacion = ?,nombre = ?,email = ?,direccion = ?,"
                 + "celular = ?,fecha_ingreso = ?,genero = ? WHERE idPersonal = ?";
-        try {
-            preparedStatement = conn.prepareStatement(query);
-            // obtener los valores de las cajas
-            id = Integer.parseInt(cajaId.getText());
-            identificacion = String.valueOf(cajaIdentificacion.getText().trim());
-            nombre = String.valueOf(cajaNombre.getText().trim());
-            email = String.valueOf(cajaEmail.getText().trim());
-            direccion = String.valueOf(cajaDireccion.getText().trim());
-            celular = String.valueOf(cajaCelular.getText().trim());
-            fechaIngreso = String.valueOf(cajaIngreso.getText().trim());
-            genero = String.valueOf(comboGenero.getSelectedItem());
-            // identificar si las variables están vacias para no enviar datos vacios a la db
-            if (!identificacion.isEmpty() && !nombre.isEmpty() && !email.isEmpty()
-                    && !direccion.isEmpty() && !celular.isEmpty() && !genero.isEmpty()) {
-                // pasar los valores al query correspondiente
-                preparedStatement.setString(1, identificacion);
-                preparedStatement.setString(2, nombre);
-                preparedStatement.setString(3, email);
-                preparedStatement.setString(4, direccion);
-                preparedStatement.setString(5, celular);
-                // @validacionIngresoFecha si el usuario no ingresa una fecha, por Default se pondra la fecha actual
-                preparedStatement.setString(6, validacionIngresoFecha(fechaIngreso));
-                preparedStatement.setString(7, genero);
-                preparedStatement.setInt(8, id);
-                preparedStatement.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Actualización exitosa");
-            } else {
-                JOptionPane.showMessageDialog(null, "No pueden haber campos vacíos");
+        switch (validationEnteredData()) {
+            case 1 -> {                
+                try {
+                    preparedStatement = conn.prepareStatement(query);
+                    // pasar los valores al query correspondiente
+                    preparedStatement.setString(1, identificacion);
+                    preparedStatement.setString(2, nombre);
+                    preparedStatement.setString(3, email);
+                    preparedStatement.setString(4, direccion);
+                    preparedStatement.setString(5, celular);
+                    // @validacionIngresoFecha si el usuario no ingresa una fecha, por Default se pondra la fecha actual
+                    preparedStatement.setString(6, fechaIngreso);
+                    preparedStatement.setString(7, genero);
+                    preparedStatement.setInt(8, id);
+                    preparedStatement.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Actualización exitosa");
+                    toClean(); // Limpiar y luego mostrar los valores actualizados en las cajas
+                    cajaIdentificacion.setText(identificacion);
+                    cajaNombre.setText(nombre);
+                    cajaEmail.setText(email);
+                    cajaDireccion.setText(direccion);
+                    cajaCelular.setText(celular);
+                    cajaIngreso.setText(fechaIngreso);
+                    comboGenero.setSelectedItem(genero); 
+                    isSelectId = true;
+                } catch (MysqlDataTruncation ex) { // si excede o hay errores en los campos solicitados
+                    JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                } catch (SQLIntegrityConstraintViolationException ex) {
+                    JOptionPane.showMessageDialog(null, "Realice consulta del registro para poder actualizar los datos");
+                } catch (SQLException ex) {
+                    System.err.println("Error en actualización, " + ex);
+                } finally {
+                    closeConnection();
+                }
             }
-        } catch (MysqlDataTruncation ex) { // si excede o hay errores en los campos solicitados
-            JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
-        } catch (SQLIntegrityConstraintViolationException ex) {
-            JOptionPane.showMessageDialog(null, "Realice consulta del registro para poder actualizar los datos");
-        } catch (SQLException ex) {
-            System.err.println("Error en actualización, " + ex);
-        } finally {
-            closeConnection();
+            case 0 ->
+                JOptionPane.showMessageDialog(null, "No pueden haber campos vacíos");
         }
     }//GEN-LAST:event_btnActualizarActionPerformed
 
