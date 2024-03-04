@@ -345,23 +345,22 @@ public class Personal extends javax.swing.JFrame {
                     cajaIngreso.setText(fechaIngreso);
                     comboGenero.setSelectedItem(genero); // el valor en la db debe ser igual que en el comboGenero (tener en cuenta las mayusculas y minusculas
                     JOptionPane.showMessageDialog(null, "Consulta exitosa");
+                    isSelectId = true;
                 } else {
                     JOptionPane.showMessageDialog(null, "N° Identificación no registrado");
                     // si no está registrado el valor ingresado pasa a la cajaIdentificacion para que pueda realizar el registro
                     toClean();
                     cajaIdentificacion.setText(buscarIdentificacion);
                 }
-                isSelectId = true;
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Error al realizar la consulta");
                 System.err.println("Error al realizar consulta, " + ex);
-            } finally {
-                closeConnection();
             }
         } else {
             JOptionPane.showMessageDialog(null, "Ingresar N° Identificación para realizar consulta");
             toClean();
         }
+        closeConnection();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
@@ -394,13 +393,12 @@ public class Personal extends javax.swing.JFrame {
                  catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "No se realizó el registro");
                     System.err.println("Error en registrar, " + ex);
-                } finally {
-                    closeConnection();
-                }                
+                }         
             } 
             case 0 -> 
                 JOptionPane.showMessageDialog(null, "No pueden haber campos vacíos");                
         }
+        closeConnection();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
@@ -438,13 +436,12 @@ public class Personal extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Realice consulta del registro para poder actualizar los datos");
                 } catch (SQLException ex) {
                     System.err.println("Error en actualización, " + ex);
-                } finally {
-                    closeConnection();
                 }
             }
             case 0 ->
                 JOptionPane.showMessageDialog(null, "No pueden haber campos vacíos");
         }
+        closeConnection();
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
@@ -459,12 +456,11 @@ public class Personal extends javax.swing.JFrame {
                 toClean();
             } catch (SQLException ex) {
                 System.err.println("Error al eliminar, " + ex);
-            } finally {
-                closeConnection();
-            }            
+            }           
         } else {
             JOptionPane.showMessageDialog(null, "Para eliminar un registro seleccione primero un N° identificación");
         }
+        closeConnection();
     }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
@@ -617,10 +613,8 @@ public class Personal extends javax.swing.JFrame {
 
     public static void main(String args[]) {
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Personal().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Personal().setVisible(true);
         });
     }
 
