@@ -1,4 +1,4 @@
-![Estado del Proyecto](https://img.shields.io/badge/Proyecto%20en%20curso-Brightgreen)
+![Estado del Proyecto](https://img.shields.io/badge/Proyecto%20terminado-blue)
 
 ## Gestión de Personal Escolar - CRUD Java Maven con GUI
 
